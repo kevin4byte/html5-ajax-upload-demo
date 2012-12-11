@@ -1,0 +1,26 @@
+<h1>HTML5 Image paste</h1>
+<p>Copy an image and CTRL-V, see the magic!</p>
+<script>
+  $(function(){
+    $('html').pasteImageReader(function(results){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/upload/?mime=' + results.file.type, true);
+      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+      xhr.addEventListener('readystatechange', function(event){
+        var status = null;
+        try{
+          status = event.target.status;
+        }
+        catch(e){
+          return;
+        }
+        if(event.target.readyState == 4 && status == '200' && event.target.responseText){
+          $('#preview').append($('<img src="' + event.target.responseText + '">'));
+          console.log(event.target.responseText)
+        }
+      }, false);
+      xhr.send(results.file);
+    })
+  })
+</script>
+<div id="preview"></div>
